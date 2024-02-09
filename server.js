@@ -10,6 +10,11 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.post('/reduce-health', (req, res) => {
+  // Your logic to reduce health
+  res.json({ success: true, message: 'Health reduced by 10' });
+});
+
 // Additional routes here, for example:
 // app.use('/api/users', usersRoute);
 // app.use('/api/products', productsRoute);
