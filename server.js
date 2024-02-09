@@ -2,6 +2,12 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000; // Use the PORT environment variable provided by Render, or default to 3000
 
+const { Octokit } = require("@octokit/rest");
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN, // Make sure to set GITHUB_TOKEN in your environment variables
+});
+
 // Middleware for parsing request bodies
 app.use(express.json());
 
