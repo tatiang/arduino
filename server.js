@@ -16,6 +16,53 @@ app.get('/', (req, res) => {
   res.end();
 });
 
+async function updateHealthInGitHub(amount, operation) {
+  const owner = 'tatiang'; // Your GitHub username
+  const repo = 'arduino'; // Your repository name
+  const path = 'tamagotchi.json'; // Path to the file in the repository
+
+  try {
+    // Fetch the current file content
+    const getContentResponse = await octokit.repos.getContent({
+      owner,
+      repo,
+      path,
+      // Ensure you're targeting the correct branch if not default
+      // ref: 'heads/main' // Optional: specify if your file is in a branch other than the default
+    });
+
+    // Decode the file content from base64
+    const content = Buffer.from(getContentResponse.data.content, 'base64').toString();
+    const json = JSON.parse(content);
+
+    // Update the health value based on operation
+    if (operation === "increase") {
+      json.health += amount;
+    } else if (operation === "decrease") {
+      json.health = Math.max(0, json.health - amount); // Prevent negative health
+    } else {
+      throw new Error("Invalid operation");
+    }
+
+    // Encode the updated content back to base64
+    const updatedContent = Buffer.from(JSON.stringify(json)).toString('base64');
+
+    // Commit the updated file back to GitHub
+    await octokit.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path,
+      message: `${operation} health by ${amount}`,
+      content: updatedContent,
+      sha: getContentResponse.data.sha, // The SHA of the file to update
+    });
+
+    console.log('Health updated successfully on GitHub.');
+  } catch (error) {
+    console.error('Error updating health on GitHub:', error);
+    throw error; // Rethrow or handle the error appropriately
+  }
+}
 
 app.get('/update-health', async (req, res) => {
     const { amount, operation } = req.query; // Get amount and operation from query parameters
