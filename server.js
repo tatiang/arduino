@@ -10,10 +10,12 @@ const octokit = new Octokit({
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Tamagotchi is live!');
-  res.send('');
-  res.send('Commands:');
+  res.write('Tamagotchi is live!\n');
+  res.write('Commands:\n');
+  // List commands or additional info here
+  res.end();
 });
+
 
 app.get('/update-health', async (req, res) => {
     const { amount, operation } = req.query; // Get amount and operation from query parameters
