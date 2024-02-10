@@ -10,7 +10,27 @@ const octokit = new Octokit({
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Tamagotchi is live!');
+  res.send('');
+  res.send('Commands:');
+});
+
+app.get('/update-health', async (req, res) => {
+    const { amount, operation } = req.query; // Get amount and operation from query parameters
+    
+    // Convert amount to number and validate operation
+    const amountNum = parseInt(amount);
+    if (isNaN(amountNum) || (operation !== "increase" && operation !== "decrease")) {
+        return res.status(400).send("Invalid request parameters");
+    }
+
+    try {
+        await updateHealthInGitHub(amountNum, operation); // Assuming this function is defined to handle GitHub update
+        res.json({ success: true, message: `Health ${operation}d by ${amount}` });
+    } catch (error) {
+        console.error(`Failed to update health: ${error}`);
+        res.status(500).send("Failed to update health");
+    }
 });
 
 app.post('/reduce-health', async (req, res) => {
