@@ -1,7 +1,7 @@
 {
   "foodRemaining": 5,
   "mood": "happy",
-  "health": 90,
+  "health": 80,
   "sleepDuration": 8,
   "activity": "running"
 }
